@@ -14,7 +14,6 @@ spec:
         default: master
       - name: GIT_COMMIT_URL
       - name: GIT_COMMIT_MESSAGE
-        value: false
   entrypoint: ci-pipeline
   serviceAccountName: codefresh-sa
   templates:
