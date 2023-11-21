@@ -143,29 +143,30 @@ spec:
         #         value: dockerhub-aperture-creds
 
         - name: enrich-git
-          depends: report-image-info
-          templateRef:
-            name: argo-hub.codefresh-csdp.1.1.9
-            template: image-enricher-git-info
-          arguments:
-            parameters:
-              - name: IMAGE_NAME
-                value: '{{ tasks.report-image-info.outputs.parameters.image-name}}'
-              - name: IMAGE_SHA
-                value: '{{ tasks.report-image-info.outputs.parameters.image-sha }}'
-              - name: GIT_PROVIDER
-                value: github
-              - name: CF_API_KEY
-                value: codefresh-token # this secret is created as part of the runtime installation
-              - name: REPO
-                value: aperture-sci/CorpSite
-              - name: BRANCH
-                value: '{{ inputs.parameters.BRANCH }}'
-              - name: GITHUB_TOKEN_SECRET_NAME
-                value: github-token
+          # depends: report-image-info
+          # templateRef:
+          #   name: argo-hub.codefresh-csdp.1.1.9
+          #   template: image-enricher-git-info
+          # arguments:
+          #   parameters:
+          #     - name: IMAGE_NAME
+          #       value: '{{ tasks.report-image-info.outputs.parameters.image-name}}'
+          #     - name: IMAGE_SHA
+          #       value: '{{ tasks.report-image-info.outputs.parameters.image-sha }}'
+          #     - name: GIT_PROVIDER
+          #       value: github
+          #     - name: CF_API_KEY
+          #       value: codefresh-token # this secret is created as part of the runtime installation
+          #     - name: REPO
+          #       value: aperture-sci/CorpSite
+          #     - name: BRANCH
+          #       value: '{{ inputs.parameters.BRANCH }}'
+          #     - name: GITHUB_TOKEN_SECRET_NAME
+          #       value: github-token
 
         - name: enrich-image-jira
-          depends: report-image-info
+          #depends: report-image-info
+          depends: build-image
           templateRef:
             name: argo-hub.codefresh-csdp.1.1.9
             template: image-enricher-jira-info
