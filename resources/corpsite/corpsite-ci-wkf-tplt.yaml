@@ -6,6 +6,10 @@ kind: WorkflowTemplate
 metadata:
   name: globex-ci
 spec:
+  podGC:
+    strategy: OnWorkflowCompletion
+    deleteDelayDuration: 1800
+
   ttlStrategy:
     secondsAfterFailure: 1800
   arguments:
