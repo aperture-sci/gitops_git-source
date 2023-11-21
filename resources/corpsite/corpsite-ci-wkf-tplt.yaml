@@ -15,7 +15,6 @@ spec:
       - name: GIT_COMMIT_URL
       - name: GIT_COMMIT_MESSAGE
   entrypoint: ci-pipeline
-  serviceAccountName: codefresh-sa
   templates:
     - name: ci-pipeline
       inputs:
@@ -65,6 +64,8 @@ spec:
               value: "main"
             - name: GIT_TOKEN_SECRET
               value: github-token
+            - name: GIT_USER_NAME
+              value: lrochette
           outputs:
             - artifacts:
               - name: repo
