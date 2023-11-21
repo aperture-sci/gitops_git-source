@@ -6,6 +6,8 @@ kind: WorkflowTemplate
 metadata:
   name: globex-ci
 spec:
+  ttlStrategy:
+    secondsAfterFailure: 1800
   arguments:
     parameters:
       - name: REPO
