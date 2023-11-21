@@ -120,27 +120,27 @@ spec:
               value: "{{ tasks.get-version.outputs.parameters.VERSION }}"
           depends: get-version
 
-        - name: report-image-info
-          depends: build-image
-          templateRef:
-            name: argo-hub.codefresh-csdp.1.1.9
-            template: report-image-info
-          arguments:
-            parameters:
-              - name: IMAGE_NAME
-                value: 'docker.io/aperture-sci/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
-              - name: CF_API_KEY
-                value: codefresh-token # this secret is created as part of the runtime installation
-
-              - name: WORKFLOW_NAME
-                value: globex-ci
-              - name: WORKFLOW_URL
-                value: "https://g.codefresh.io/2.0/workflows/{{ workflow.name}}"
-                #value: "https://g.codefresh.io/2.0/workflows/corpsite-ci-xwqch"
-              - name: DOCKERHUB_USERNAME
-                value: dockerhub-aperture-creds
-              - name: DOCKERHUB_PASSWORD
-                value: dockerhub-aperture-creds
+        # - name: report-image-info
+        #   depends: build-image
+        #   templateRef:
+        #     name: argo-hub.codefresh-csdp.1.1.9
+        #     template: report-image-info
+        #   arguments:
+        #     parameters:
+        #       - name: IMAGE_NAME
+        #         value: 'docker.io/aperture-sci/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
+        #       - name: CF_API_KEY
+        #         value: codefresh-token # this secret is created as part of the runtime installation
+        #
+        #       - name: WORKFLOW_NAME
+        #         value: globex-ci
+        #       - name: WORKFLOW_URL
+        #         value: "https://g.codefresh.io/2.0/workflows/{{ workflow.name}}"
+        #         #value: "https://g.codefresh.io/2.0/workflows/corpsite-ci-xwqch"
+        #       - name: DOCKERHUB_USERNAME
+        #         value: dockerhub-aperture-creds
+        #       - name: DOCKERHUB_PASSWORD
+        #         value: dockerhub-aperture-creds
 
         - name: enrich-git
           depends: report-image-info
