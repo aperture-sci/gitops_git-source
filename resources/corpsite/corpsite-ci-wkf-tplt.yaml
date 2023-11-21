@@ -14,7 +14,6 @@ spec:
         default: master
       - name: GIT_COMMIT_URL
       - name: GIT_COMMIT_MESSAGE
-      - name: CREATE_CR
         value: false
   entrypoint: ci-pipeline
   serviceAccountName: codefresh-sa
@@ -47,6 +46,8 @@ spec:
               value: "{{inputs.parameters.BRANCH}}"
             - name: GIT_TOKEN_SECRET
               value: github-token
+            - name: GIT_USER_NAME
+              value: lrochette
           outputs:
             - artifacts:
               - name: repo
