@@ -109,7 +109,7 @@ spec:
                 from: '{{ tasks.maven-build.outputs.artifacts.builddir }}'
             parameters:
             - name: image
-              value: "lrochette/globex"
+              value: "aperturesci/globex"
             - name: tag
               value: "{{ tasks.get-version.outputs.parameters.VERSION }}"
           depends: get-version
@@ -152,7 +152,7 @@ spec:
               - name: CF_API_KEY
                 value: codefresh-token # this secret is created as part of the runtime installation
               - name: REPO
-                value: lrochette/CorpSite
+                value: aperture-sci/CorpSite
               - name: BRANCH
                 value: '{{ inputs.parameters.BRANCH }}'
               - name: GITHUB_TOKEN_SECRET_NAME
@@ -166,13 +166,14 @@ spec:
           arguments:
             parameters:
             - name: IMAGE_NAME
-              value: 'docker.io/lrochette/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
+              value: 'docker.io/aperturesci/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
             - name: CF_API_KEY
-              value: "codefresh-v1-token"
+              value: "codefresh-user-token"
             - name: JIRA_PROJECT_PREFIX
               value: 'FT'
             - name: JIRA_MESSAGE
-              value: '{{ inputs.parameters.GIT_COMMIT_MESSAGE}}'
+              value: "[FT-50] Change location"
+              #value: '{{ inputs.parameters.GIT_COMMIT_MESSAGE}}'
             - name: JIRA_HOST_URL
               value: 'https://codefresh-io.atlassian.net'
             - name: JIRA_API_TOKEN_SECRET
@@ -200,7 +201,7 @@ spec:
                 value: "mikefarah/yq:3.3.4"
               - name: commands
                 value: |
-                  yq w -i kustomize/globex/overlays/dev/deployment.yaml 'spec.template.spec.containers[0].image' "lrochette/globex:{{tasks.get-version.outputs.parameters.VERSION}}"
+                  yq w -i kustomize/globex/overlays/dev/deployment.yaml 'spec.template.spec.containers[0].image' "aperturesci/globex:{{tasks.get-version.outputs.parameters.VERSION}}"
 
         - name: commit-config-change
           depends: update-manifest
