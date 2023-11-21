@@ -305,7 +305,7 @@ spec:
             items:
             - key: .dockerconfigjson
               path: config.json
-            secretName: dockerhub-config
+            secretName: dockerhub-aperture-config
       container:
         image: gcr.io/kaniko-project/executor:v1.6.0
         # workingDir: /codefresh/volume/CorpSite
