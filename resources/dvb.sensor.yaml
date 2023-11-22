@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: dvb
+spec:
+  template:
+    serviceAccountName: argo-server
+  eventBusName: codefresh-eventbus
+  dependencies:
+    - name: github-5144ce68-86be-49fb-82b7-d3e9a60f0a57
+      eventName: github-5144ce68-86be-49fb-82b7-d3e9a60f0a57
+      eventSourceName: dvb
+      filters:
+        data:
+          - path: body.X-GitHub-Event
+            value:
+              - push
+            type: string
+          - path: body.ref
+            template: '{{ (split "/" .Input)._1 }}'
+            value:
+              - heads
+            type: string
+  triggers:
+    - template:
+        name: ci
+        conditions: github-5144ce68-86be-49fb-82b7-d3e9a60f0a57
+        argoWorkflow:
+          operation: submit
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: WorkflowTemplate
+              metadata:
+                generateName: dvb-ci-
+              spec:
+                arguments:
+                  parameters:
+                    - name: REPO
+                      value: https://github.com/aperture-sci/CorpSite
+                    - name: BRANCH
+                      value: ''
+                    - name: GIT_COMMIT_URL
+                      value: ''
+                    - name: GIT_COMMIT_MESSAGE
+                      value: ''
+                workflowTemplateRef:
+                  name: globex-ci
+          parameters:
+            - dest: spec.arguments.parameters.0.value
+              src:
+                dependencyName: github-5144ce68-86be-49fb-82b7-d3e9a60f0a57
+                dataTemplate: '{{ .Input.body.repository.clone_url }}'
+            - dest: spec.arguments.parameters.1.value
+              src:
+                dependencyName: github-5144ce68-86be-49fb-82b7-d3e9a60f0a57
+                dataTemplate: '{{ trimPrefix "refs/heads/" .Input.body.ref }}'
+            - dest: spec.arguments.parameters.2.value
+              src:
+                dependencyName: github-5144ce68-86be-49fb-82b7-d3e9a60f0a57
+                dataTemplate: '{{ .Input.body.head_commit.url }}'
+            - dest: spec.arguments.parameters.3.value
+              src:
+                dependencyName: github-5144ce68-86be-49fb-82b7-d3e9a60f0a57
+                dataTemplate: '{{ .Input.body.head_commit.message }}'

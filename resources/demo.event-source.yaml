@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: demo
+spec:
+  eventBusName: codefresh-eventbus
+  service:
+    ports:
+      - port: 80
+  template:
+    serviceAccountName: argo-server
+  github:
+    github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161:
+      events:
+        - push
+      repositories:
+        - owner: codefresh-contrib
+          names:
+            - python-flask-sample-app
+      webhook:
+        port: '80'
+        method: POST
+        endpoint: /webhooks/gitops/demo/github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161
+        url: https://641dfab29939b208915c0d4e-gitops.tunnels.cf-cd.com
+      active: true
+      insecure: false
+      contentType: json
+      deleteHookOnFinish: true
+      apiToken:
+        name: runtime-repo-creds-secret
+        key: password
