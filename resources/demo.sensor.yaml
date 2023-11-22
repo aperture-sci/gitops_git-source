@@ -36,6 +36,10 @@ spec:
               spec:
                 arguments:
                   parameters:
+                    - name: GIT_COMMIT_URL
+                      value: ''
+                    - name: GIT_COMMIT_MESSAGE
+                      value: ''
                     - name: BRANCH
                       value: ''
                     - name: REPO
@@ -46,8 +50,16 @@ spec:
             - dest: spec.arguments.parameters.0.value
               src:
                 dependencyName: github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161
-                dataTemplate: master
+                dataTemplate: 'null'
             - dest: spec.arguments.parameters.1.value
+              src:
+                dependencyName: github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161
+                dataTemplate: 'null'
+            - dest: spec.arguments.parameters.2.value
+              src:
+                dependencyName: github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161
+                dataTemplate: master
+            - dest: spec.arguments.parameters.3.value
               src:
                 dependencyName: github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161
                 dataTemplate: >-
