@@ -36,12 +36,18 @@ spec:
               spec:
                 arguments:
                   parameters:
+                    - name: BRANCH
+                      value: ''
                     - name: REPO
                       value: ''
                 workflowTemplateRef:
                   name: globex-ci
           parameters:
             - dest: spec.arguments.parameters.0.value
+              src:
+                dependencyName: github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161
+                dataTemplate: master
+            - dest: spec.arguments.parameters.1.value
               src:
                 dependencyName: github-742b38ae-d7ee-40b3-9a0d-a2046a9e9161
                 dataTemplate: >-
