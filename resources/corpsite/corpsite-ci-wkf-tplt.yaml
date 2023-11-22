@@ -57,25 +57,25 @@ spec:
               - name: repo
                 path: /tmp/CorpSite
 
-        - name: clone-config
-          depends: build-image
-          templateRef:
-            name: argo-hub.git.0.0.3
-            template: clone
-          arguments:
-            parameters:
-            - name: REPO_URL
-              value: "https://github.com/aperture-sci/gitops_applications.git"
-            - name: REVISION
-              value: "main"
-            - name: GIT_TOKEN_SECRET
-              value: github-token
-            - name: GIT_USER_NAME
-              value: lrochette
-          outputs:
-            - artifacts:
-              - name: repo
-                path: /tmp/CorpSite_gitops
+        # - name: clone-config
+        #   depends: build-image
+        #   templateRef:
+        #     name: argo-hub.git.0.0.3
+        #     template: clone
+        #   arguments:
+        #     parameters:
+        #     - name: REPO_URL
+        #       value: "https://github.com/aperture-sci/gitops_applications.git"
+        #     - name: REVISION
+        #       value: "main"
+        #     - name: GIT_TOKEN_SECRET
+        #       value: github-token
+        #     - name: GIT_USER_NAME
+        #       value: lrochette
+        #   outputs:
+        #     - artifacts:
+        #       - name: repo
+        #         path: /tmp/CorpSite_gitops
 
         - name: maven-build
           template: maven
@@ -194,69 +194,69 @@ spec:
               - name: repo
                 from: '{{ tasks.clone.outputs.artifacts.repo }}'
 
-        - name: update-manifest
-          depends: "clone-config"
-          templateRef:
-            name: lr.generic
-            template: freestyle-with-artifact
-          arguments:
-            artifacts:
-              - name: dir
-                from: '{{ tasks.clone-config.outputs.artifacts.repo }}'
-            parameters:
-              - name: image
-                value: "mikefarah/yq:3.3.4"
-              - name: commands
-                value: |
-                  yq w -i kustomize/globex/overlays/dev/deployment.yaml 'spec.template.spec.containers[0].image' "aperturesci/globex:{{tasks.get-version.outputs.parameters.VERSION}}"
+        # - name: update-manifest
+        #   depends: "clone-config"
+        #   templateRef:
+        #     name: lr.generic
+        #     template: freestyle-with-artifact
+        #   arguments:
+        #     artifacts:
+        #       - name: dir
+        #         from: '{{ tasks.clone-config.outputs.artifacts.repo }}'
+        #     parameters:
+        #       - name: image
+        #         value: "mikefarah/yq:3.3.4"
+        #       - name: commands
+        #         value: |
+        #           yq w -i kustomize/globex/overlays/dev/deployment.yaml 'spec.template.spec.containers[0].image' "aperturesci/globex:{{tasks.get-version.outputs.parameters.VERSION}}"
 
-        - name: commit-config-change
-          depends: update-manifest
-          templateRef:
-            name: argo-hub.git.0.0.3
-            template: commit
-          arguments:
-            artifacts:
-              - name: repo
-                from: "{{tasks.update-manifest.outputs.artifacts.dir}}"
-            parameters:
-              - name: GIT_USER_NAME
-                value: "lrochette"
-              - name: GIT_USER_EMAIL
-                value: "laurent.rochette@codefresh.io"
-              - name: MESSAGE
-                value: "Committing new version for globex for lrochette/gitops_applications built in {{ workflow.name }}"
-
-        - name: deploy
-          depends: commit-config-change
-          template: approve
-
-        - name: promote-to-prod
-          depends: deploy
-          templateRef:
-            name: argo-hub.gitops-promotion.0.0.1
-            template: promote-from-src-to-dest-env
-          arguments:
-            parameters:
-            # Git
-            - name: git-repo-url
-              value: "https://github.com/aperture-sci/gitops_applications.git"
-            - name: git-auth-secret
-              value: github-token
-            # Replacement Substrings
-            - name: env-src
-              value: dev
-            - name: env-dest
-              value: prod
-            - name: svc-name-list
-              value: "globex"
-            # Pattern Strings
-            - name: file-path-pattern
-              value: "kustomize/[[SVC_NAME]]/overlays/[[ENV]]/deployment.yaml"
-            - name: promotion-type
-              value: yaml-key
-            - name: yaml-key-pattern
-              value: ".spec.template.spec.containers.0.image"
+        # - name: commit-config-change
+        #   depends: update-manifest
+        #   templateRef:
+        #     name: argo-hub.git.0.0.3
+        #     template: commit
+        #   arguments:
+        #     artifacts:
+        #       - name: repo
+        #         from: "{{tasks.update-manifest.outputs.artifacts.dir}}"
+        #     parameters:
+        #       - name: GIT_USER_NAME
+        #         value: "lrochette"
+        #       - name: GIT_USER_EMAIL
+        #         value: "laurent.rochette@codefresh.io"
+        #       - name: MESSAGE
+        #         value: "Committing new version for globex for lrochette/gitops_applications built in {{ workflow.name }}"
+        #
+        # - name: deploy
+        #   depends: commit-config-change
+        #   template: approve
+        #
+        # - name: promote-to-prod
+        #   depends: deploy
+        #   templateRef:
+        #     name: argo-hub.gitops-promotion.0.0.1
+        #     template: promote-from-src-to-dest-env
+        #   arguments:
+        #     parameters:
+        #     # Git
+        #     - name: git-repo-url
+        #       value: "https://github.com/aperture-sci/gitops_applications.git"
+        #     - name: git-auth-secret
+        #       value: github-token
+        #     # Replacement Substrings
+        #     - name: env-src
+        #       value: dev
+        #     - name: env-dest
+        #       value: prod
+        #     - name: svc-name-list
+        #       value: "globex"
+        #     # Pattern Strings
+        #     - name: file-path-pattern
+        #       value: "kustomize/[[SVC_NAME]]/overlays/[[ENV]]/deployment.yaml"
+        #     - name: promotion-type
+        #       value: yaml-key
+        #     - name: yaml-key-pattern
+        #       value: ".spec.template.spec.containers.0.image"
 
     # Additional templates
     - name: approve
