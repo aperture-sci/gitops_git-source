@@ -196,39 +196,39 @@ spec:
 
 
 
-        # - name: update-manifest
-        #   depends: "clone-config"
-        #   templateRef:
-        #     name: lr.generic
-        #     template: freestyle-with-artifact
-        #   arguments:
-        #     artifacts:
-        #       - name: dir
-        #         from: '{{ tasks.clone-config.outputs.artifacts.repo }}'
-        #     parameters:
-        #       - name: image
-        #         value: "mikefarah/yq:3.3.4"
-        #       - name: commands
-        #         value: |
-        #           yq w -i kustomize/globex/overlays/dev/deployment.yaml 'spec.template.spec.containers[0].image' "aperturesci/globex:{{tasks.get-version.outputs.parameters.VERSION}}"
+        - name: update-manifest
+          depends: clone-config && build-image
+          templateRef:
+            name: lr.generic
+            template: freestyle-with-artifact
+          arguments:
+            artifacts:
+              - name: dir
+                from: '{{ tasks.clone-config.outputs.artifacts.repo }}'
+            parameters:
+              - name: image
+                value: "mikefarah/yq:3.3.4"
+              - name: commands
+                value: |
+                  yq w -i kustomize/globex/overlays/dev/deployment.yaml 'spec.template.spec.containers[0].image' "aperturesci/globex:{{tasks.get-version.outputs.parameters.VERSION}}"
 
-        # - name: commit-config-change
-        #   depends: update-manifest
-        #   templateRef:
-        #     name: argo-hub.git.0.0.3
-        #     template: commit
-        #   arguments:
-        #     artifacts:
-        #       - name: repo
-        #         from: "{{tasks.update-manifest.outputs.artifacts.dir}}"
-        #     parameters:
-        #       - name: GIT_USER_NAME
-        #         value: "lrochette"
-        #       - name: GIT_USER_EMAIL
-        #         value: "laurent.rochette@codefresh.io"
-        #       - name: MESSAGE
-        #         value: "Committing new version for globex for lrochette/gitops_applications built in {{ workflow.name }}"
-        #
+        - name: commit-config-change
+          depends: update-manifest
+          templateRef:
+            name: argo-hub.git.0.0.3
+            template: commit
+          arguments:
+            artifacts:
+              - name: repo
+                from: "{{tasks.update-manifest.outputs.artifacts.dir}}"
+            parameters:
+              - name: GIT_USER_NAME
+                value: "lrochette"
+              - name: GIT_USER_EMAIL
+                value: "laurent.rochette@codefresh.io"
+              - name: MESSAGE
+                value: "Committing new version {{ tasks.get-version.outputs.parameters.VERSION }} for globex for aperture/gitops_applications built in {{ workflow.name }}"
+
         # - name: deploy
         #   depends: commit-config-change
         #   template: approve
