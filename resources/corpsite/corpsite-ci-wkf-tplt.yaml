@@ -77,6 +77,14 @@ spec:
               - name: repo
                 path: /tmp/CorpSite_gitops
 
+        - name: get-version
+          depends: clone
+          template: get-version
+          arguments:
+            artifacts:
+              - name: repo
+                from: '{{ tasks.clone.outputs.artifacts.repo }}'
+
         - name: maven-build
           template: maven
           arguments:
@@ -118,7 +126,7 @@ spec:
               value: "aperturesci/globex"
             - name: tag
               value: "{{ tasks.get-version.outputs.parameters.VERSION }}"
-          depends: get-version
+          depends: get-version && maven-build
 
         - name: report-image-info
           depends: build-image
@@ -128,7 +136,7 @@ spec:
           arguments:
             parameters:
               - name: IMAGE_NAME
-                value: 'docker.io/aperture-sci/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
+                value: 'docker.io/aperturesci/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
               - name: CF_API_KEY
                 value: codefresh-token # this secret is created as part of the runtime installation
 
@@ -186,13 +194,7 @@ spec:
         #     - name: JIRA_API_TOKEN_SECRET
         #       value: 'jira-token'
 
-        - name: get-version
-          depends: maven-build
-          template: get-version
-          arguments:
-            artifacts:
-              - name: repo
-                from: '{{ tasks.clone.outputs.artifacts.repo }}'
+
 
         # - name: update-manifest
         #   depends: "clone-config"
