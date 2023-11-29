@@ -228,7 +228,7 @@ spec:
                 value: "laurent.rochette@codefresh.io"
               - name: MESSAGE
                 value: "Committing new version {{ tasks.get-version.outputs.parameters.VERSION }} for globex for aperture/gitops_applications built in {{ workflow.name }}"
-          when: "{{workflow.name}} =~ '^corpsite-ci'"
+          when: " '{{workflow.name}}' =~ '^corpsite-ci'"
         # - name: deploy
         #   depends: commit-config-change
         #   template: approve
