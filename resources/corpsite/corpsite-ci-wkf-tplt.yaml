@@ -6,12 +6,12 @@ kind: WorkflowTemplate
 metadata:
   name: globex-ci
 spec:
-  podGC:
-    strategy: OnWorkflowCompletion
-    deleteDelayDuration: 1800
+  # podGC:
+  #   strategy: OnWorkflowCompletion
+  #   deleteDelayDuration: 1800
 
-  ttlStrategy:
-    secondsAfterFailure: 1800
+  # ttlStrategy:
+  #   secondsAfterFailure: 1800
   arguments:
     parameters:
       - name: REPO
@@ -57,25 +57,25 @@ spec:
               - name: repo
                 path: /tmp/CorpSite
 
-        # - name: clone-config
-        #   depends: build-image
-        #   templateRef:
-        #     name: argo-hub.git.0.0.3
-        #     template: clone
-        #   arguments:
-        #     parameters:
-        #     - name: REPO_URL
-        #       value: "https://github.com/aperture-sci/gitops_applications.git"
-        #     - name: REVISION
-        #       value: "main"
-        #     - name: GIT_TOKEN_SECRET
-        #       value: github-token
-        #     - name: GIT_USER_NAME
-        #       value: lrochette
-        #   outputs:
-        #     - artifacts:
-        #       - name: repo
-        #         path: /tmp/CorpSite_gitops
+        - name: clone-config
+          # depends: build-image
+          templateRef:
+            name: argo-hub.git.0.0.3
+            template: clone
+          arguments:
+            parameters:
+            - name: REPO_URL
+              value: "https://github.com/aperture-sci/gitops_applications.git"
+            - name: REVISION
+              value: "main"
+            - name: GIT_TOKEN_SECRET
+              value: github-token
+            - name: GIT_USER_NAME
+              value: lrochette
+          outputs:
+            - artifacts:
+              - name: repo
+                path: /tmp/CorpSite_gitops
 
         - name: maven-build
           template: maven
@@ -92,20 +92,20 @@ spec:
                 path: /tmp/build
           depends: clone
 
-        - name: maven-test
-          template: maven
-          arguments:
-            parameters:
-            - name: target
-              value: "test"
-            artifacts:
-              - name: builddir
-                from: '{{ tasks.maven-build.outputs.artifacts.builddir }}'
-          outputs:
-            - artifacts:
-              - name: builddir
-                path: /tmp/build
-          depends: maven-build
+        # - name: maven-test
+        #   template: maven
+        #   arguments:
+        #     parameters:
+        #     - name: target
+        #       value: "test"
+        #     artifacts:
+        #       - name: builddir
+        #         from: '{{ tasks.maven-build.outputs.artifacts.builddir }}'
+        #   outputs:
+        #     - artifacts:
+        #       - name: builddir
+        #         path: /tmp/build
+        #   depends: maven-build
 
         - name: build-image
           template: kaniko-build
@@ -120,27 +120,27 @@ spec:
               value: "{{ tasks.get-version.outputs.parameters.VERSION }}"
           depends: get-version
 
-        # - name: report-image-info
-        #   depends: build-image
-        #   templateRef:
-        #     name: argo-hub.codefresh-csdp.1.1.9
-        #     template: report-image-info
-        #   arguments:
-        #     parameters:
-        #       - name: IMAGE_NAME
-        #         value: 'docker.io/aperture-sci/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
-        #       - name: CF_API_KEY
-        #         value: codefresh-token # this secret is created as part of the runtime installation
-        #
-        #       - name: WORKFLOW_NAME
-        #         value: globex-ci
-        #       - name: WORKFLOW_URL
-        #         value: "https://g.codefresh.io/2.0/workflows/{{ workflow.name}}"
-        #         #value: "https://g.codefresh.io/2.0/workflows/corpsite-ci-xwqch"
-        #       - name: DOCKERHUB_USERNAME
-        #         value: dockerhub-aperture-creds
-        #       - name: DOCKERHUB_PASSWORD
-        #         value: dockerhub-aperture-creds
+        - name: report-image-info
+          depends: build-image
+          templateRef:
+            name: argo-hub.codefresh-csdp.1.1.9
+            template: report-image-info
+          arguments:
+            parameters:
+              - name: IMAGE_NAME
+                value: 'docker.io/aperture-sci/globex:{{ tasks.get-version.outputs.parameters.VERSION }}'
+              - name: CF_API_KEY
+                value: codefresh-token # this secret is created as part of the runtime installation
+
+              - name: WORKFLOW_NAME
+                value: globex-ci
+              - name: WORKFLOW_URL
+                value: "https://g.codefresh.io/2.0/workflows/{{ workflow.name}}"
+                #value: "https://g.codefresh.io/2.0/workflows/corpsite-ci-xwqch"
+              - name: DOCKERHUB_USERNAME
+                value: dockerhub-aperture-creds
+              - name: DOCKERHUB_PASSWORD
+                value: dockerhub-aperture-creds
 
         # - name: enrich-git
         #   depends: report-image-info
