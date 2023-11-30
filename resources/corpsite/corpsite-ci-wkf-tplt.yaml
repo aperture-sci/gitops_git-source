@@ -229,41 +229,43 @@ spec:
               - name: MESSAGE
                 value: "Committing new version {{ tasks.get-version.outputs.parameters.VERSION }} for globex for aperture/gitops_applications built in {{ workflow.name }}"
           when: " '{{workflow.name}}' =~ '^corpsite-ci'"
-        # - name: deploy
-        #   depends: commit-config-change
-        #   template: approve
-        #
-        # - name: promote-to-prod
-        #   depends: deploy
-        #   templateRef:
-        #     name: argo-hub.gitops-promotion.0.0.1
-        #     template: promote-from-src-to-dest-env
-        #   arguments:
-        #     parameters:
-        #     # Git
-        #     - name: git-repo-url
-        #       value: "https://github.com/aperture-sci/gitops_applications.git"
-        #     - name: git-auth-secret
-        #       value: github-token
-        #     # Replacement Substrings
-        #     - name: env-src
-        #       value: dev
-        #     - name: env-dest
-        #       value: prod
-        #     - name: svc-name-list
-        #       value: "globex"
-        #     # Pattern Strings
-        #     - name: file-path-pattern
-        #       value: "kustomize/[[SVC_NAME]]/overlays/[[ENV]]/deployment.yaml"
-        #     - name: promotion-type
-        #       value: yaml-key
-        #     - name: yaml-key-pattern
-        #       value: ".spec.template.spec.containers.0.image"
+
+        - name: deploy
+          depends: commit-config-change
+          template: approve
+          when: " '{{workflow.name}}' =~ '^corpsite-ci'"
+
+        - name: promote-to-prod
+          depends: deploy
+          templateRef:
+            name: argo-hub.gitops-promotion.0.0.1
+            template: promote-from-src-to-dest-env
+          arguments:
+            parameters:
+            # Git
+            - name: git-repo-url
+              value: "https://github.com/aperture-sci/gitops_applications.git"
+            - name: git-auth-secret
+              value: github-token
+            # Replacement Substrings
+            - name: env-src
+              value: dev
+            - name: env-dest
+              value: prod
+            - name: svc-name-list
+              value: "globex"
+            # Pattern Strings
+            - name: file-path-pattern
+              value: "kustomize/[[SVC_NAME]]/overlays/[[ENV]]/deployment.yaml"
+            - name: promotion-type
+              value: yaml-key
+            - name: yaml-key-pattern
+              value: ".spec.template.spec.containers.0.image"
 
     # Additional templates
     - name: approve
       suspend: {}
-#        duration: "5m"
+        duration: "15m"
 
     - name: maven
       inputs:
