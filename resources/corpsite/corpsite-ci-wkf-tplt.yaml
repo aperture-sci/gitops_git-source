@@ -264,7 +264,7 @@ spec:
 
     # Additional templates
     - name: approve
-      suspend: {}
+      suspend: 
         duration: "15m"
 
     - name: maven
