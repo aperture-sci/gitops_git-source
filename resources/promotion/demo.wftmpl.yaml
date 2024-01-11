@@ -23,7 +23,7 @@ spec:
                 - name: flags
                   value: '--prune --timeout 120'
                 - name: serverUrl
-                  value: 'argocd-server.{{workflow.parameters.APP_NAMESPACE}}.svc.cluster.local'
+                  value: 'argo-cd-server.{{workflow.parameters.APP_NAMESPACE}}.svc.cluster.local'
                 - name: opts
                   value: '--grpc-web --plaintext'
                 - name: tokenSecret
@@ -41,7 +41,7 @@ spec:
                 - name: flags
                   value: '--health --timeout 120'
                 - name: serverUrl
-                  value: 'argocd-server.{{workflow.parameters.APP_NAMESPACE}}.svc.cluster.local'
+                  value: 'argo-cd-server.{{workflow.parameters.APP_NAMESPACE}}.svc.cluster.local'
                 - name: opts
                   value: '--grpc-web --plaintext'
                 - name: tokenSecret
