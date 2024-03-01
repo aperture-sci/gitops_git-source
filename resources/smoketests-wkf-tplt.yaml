@@ -5,13 +5,17 @@ kind: WorkflowTemplate
 metadata:
   name: smoketests
 spec:
-  arguments:
-    parameters:
-      - name: INSTANCE
-        value: https://dev202099.service-now.com
+  # arguments:
+  #   parameters:
+  #   - name: NB_TESTS
+  #     value: 100
+  #   - name: THRESHOLD
+  #     value: 85
+  #   - name: TEST_RATE
+  #     value: 15
 
-entrypoint: smoke
-templates:
+  entrypoint: smoke
+  templates:
     - name: smoke
       inputs:
         parameters:
