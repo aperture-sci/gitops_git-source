@@ -27,7 +27,7 @@ spec:
             value: 15
       script:
         image: bash:5.2.26
-        command: ["/bin/bash"]
+        command: ["/usr/local/bin/bash"]
         source: |
           num_tests={{inputs.parameters.NB_TESTS}}
           error=0
