@@ -26,7 +26,7 @@ spec:
           - name: TEST_RATE
             value: 15
       script:
-        image: alpine:3.7
+        image: bash:5.2.26
         command: ["/bin/bash"]
         source: |
           num_tests={{inputs.parameters.NB_TESTS}}
