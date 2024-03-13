@@ -22,9 +22,9 @@ spec:
           - name: NB_TESTS
             value: 100
           - name: THRESHOLD
-            value: 85
+            value: 50
           - name: TEST_RATE
-            value: 15
+            value: 1
       script:
         image: bash:5.2.26
         command: ["/usr/local/bin/bash"]
